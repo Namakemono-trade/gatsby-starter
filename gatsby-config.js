@@ -6,10 +6,10 @@ require("dotenv").config({
 
 module.exports = {
   siteMetadata: {
-    siteUrl: "https://gatsbycontentfulhomepage.gatsbyjs.io/",
-    title: "なまけものPRV",
-    author: `Gatsby`,
-    description: "A Gatsby Starter for building homepages with Contentful",
+    siteUrl: "https://namakemono.blog/",
+    title: "ナマケモノPRV",
+    author: `Namakemono`,
+    description: "投資、時短、Webサイト開発",
   },
   plugins: [
     {
@@ -28,8 +28,8 @@ module.exports = {
     {
       resolve: "gatsby-plugin-manifest",
       options: {
-        name: "Gatsby Starter Contentful Homepage",
-        short_name: "Gatsby",
+        name: "Namakemono Homepage",
+        short_name: "Namakemono",
         start_url: "/",
         // These can be imported once ESM support lands
         background_color: "#ffe491",
