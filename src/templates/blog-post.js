@@ -1,4 +1,5 @@
 import * as React from "react"
+import { graphql } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import Layout from "../components/layout"
 import {
@@ -14,56 +15,60 @@ import { avatar as avatarStyle } from "../components/ui.css"
 import * as styles from "./blog-post.css"
 import SEOHead from "../components/head"
 
-export default function BlogPost(props) {
+export default function BlogPage({ data }) {
+  const {
+    title,
+    createdAt,
+    image,
+    contentMarkdown: { contentMarkdown },
+  } = data.contentfulBlogPage
+
   return (
     <Layout>
       <Container>
         <Box paddingY={5}>
           <Heading as="h1" center>
-            {props.title}
+            {title}
           </Heading>
           <Space size={4} />
-          {props.author && (
-            <Box center>
-              <Flex>
-                {props.author.avatar &&
-                  (!!props.author.avatar.gatsbyImageData ? (
-                    <Avatar
-                      {...props.author.avatar}
-                      image={props.author.avatar.gatsbyImageData}
-                    />
-                  ) : (
-                    <img
-                      src={props.author.avatar.url}
-                      alt={props.author.name}
-                      className={avatarStyle}
-                    />
-                  ))}
-                <Text variant="bold">{props.author.name}</Text>
-              </Flex>
-            </Box>
-          )}
+          <Text center>{createdAt}</Text>
           <Space size={4} />
-          <Text center>{props.date}</Text>
-          <Space size={4} />
-          {props.image && (
+          {image && (
             <GatsbyImage
-              alt={props.image.alt}
-              image={props.image.gatsbyImageData}
+              alt={image.alt}
+              image={image.gatsbyImageData}
             />
           )}
           <Space size={5} />
           <div
-            className={styles.blogPost}
-            dangerouslySetInnerHTML={{
-              __html: props.html,
-            }}
+            className={styles.blogPage}
+            dangerouslySetInnerHTML={{ __html: contentMarkdown }}
           />
         </Box>
       </Container>
     </Layout>
   )
 }
-export const Head = (props) => {
-  return <SEOHead {...props} description={props.excerpt} />
+
+export const Head = ({ data }) => {
+  const { excerpt } = data.contentfulBlogPage
+  return <SEOHead {...data} description={excerpt} />
 }
+
+export const pageQuery = graphql`
+  query($slug: String!) {
+    contentfulBlogPage(slug: { eq: $slug }) {
+      id
+      title
+      slug
+      createdAt(formatString: "YYYY年MM月DD日")
+      image {
+        alt
+        gatsbyImageData
+      }
+      contentMarkdown{
+        contentMarkdown
+      }
+    }
+  }
+`

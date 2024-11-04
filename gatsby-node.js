@@ -1,5 +1,7 @@
 const { documentToHtmlString } = require("@contentful/rich-text-html-renderer")
 const { getGatsbyImageResolver } = require("gatsby-plugin-image/graphql-utils")
+const Promise = require('bluebird')
+const path = require('path')
 
 exports.createSchemaCustomization = async ({ actions }) => {
   actions.createFieldExtension({
@@ -612,8 +614,8 @@ exports.createSchemaCustomization = async ({ actions }) => {
   `)
 }
 
-exports.createPages = ({ actions }) => {
-  const { createSlice } = actions
+exports.createPages = ({ graphql, actions }) => {
+  const { createSlice, createPage } = actions
   createSlice({
     id: "header",
     component: require.resolve("./src/components/header.js"),
@@ -622,5 +624,48 @@ exports.createPages = ({ actions }) => {
     id: "footer",
     component: require.resolve("./src/components/footer.js"),
   })
+  return new Promise((resolve, reject) => {
+    const blogPage = path.resolve('./src/templates/blog-post.js')
+    resolve(
+      graphql(
+        `
+          {
+            allContentfulBlogPage(filter: {node_locale: {eq: "ja-JP"}}) {
+              edges {
+                node {
+                  id
+                  title
+                  slug
+                  createdAt(formatString: "YYYY年MM月DD日")
+                  image {
+                    alt
+                    gatsbyImageData
+                  }
+                  contentMarkdown{
+                    contentMarkdown
+                  }
+                }
+              }
+            }
+          }
+          `
+      ).then(result => {
+        if (result.errors) {
+          console.log(result.errors)
+          reject(result.errors)
+        }
+
+        const posts = result.data.allContentfulBlogPage.edges
+        posts.forEach((post) => {
+          createPage({
+            path: `/blog/${post.node.slug}/`,
+            component: blogPage,
+            context: {
+              slug: post.node.slug
+            },
+          })
+        })
+      })
+    )
+  })
 }
-      
