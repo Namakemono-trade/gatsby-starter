@@ -1,13 +1,17 @@
-import { globalStyle, globalKeyframes } from "@vanilla-extract/css"
+import { globalStyle, globalKeyframes, style, keyframes } from "@vanilla-extract/css"
 import { theme } from "./theme.css"
+
+const bgAnimation = keyframes({ '0%': { backgroundPosition: '0%' }, '100%': { backgroundPosition: '100%' }, });
 
 globalStyle("body", {
   margin: 0,
   fontFamily: theme.fonts.text,
   color: theme.colors.text,
-  backgroundColor: theme.colors.background,
+  backgroundImage: "linear-gradient(-255deg, #e8dac0 0%, #e8dac0 56%, #768d70 100%)",
+  backgroundSize: "400%",
   WebkitFontSmoothing: "antialiased",
   MozOsxFontSmoothing: "grayscale",
+  animation: `${bgAnimation} 6s infinite alternate`,
 })
 
 globalStyle("*", {
@@ -59,3 +63,5 @@ globalKeyframes("fadeOut", {
     visibility: "hidden",
   },
 })
+
+export const blogLinkStyles = style({ position: 'relative', width: `100%`, height: `100%`, display: `block`, });
